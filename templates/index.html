@@ -4,22 +4,50 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+        h6 {
+            font-size: 15px;
+        }
         .h2-text{
             color: red;
         }
+        .h6-text{
+            color: purple;
+        }
+        #h1-text{
+            font-size: 50px;
+            color: midnightblue;
+        }
+        div.python > a{
+            color: green;
+        }
+        ul li {
+            color: darkgreen;
+        }
+        input[type="text"]{
+            background: deepskyblue;
+        }
+       input[type="text"]:hover{
+            background: deeppink;
+        }
+       a:hover{
+           color: red;
+       }
+       li::marker{
+           color: red;
+       }
+       ul > li:nth-child(2){
+           color: blue;
+       }
     </style>
 </head>
 <body>
-<div>
-    <h1 id="h1-text">H1 Text</h1>
-    <h2 class="h2-text">H2 text</h2>
-    <h6 class="h2-text">H6 TEXT</h6>
+<div class="python">
+    <h1 id="h1-text">Automation Courses</h1>
+    <h2 class="h2-text">UI Automation</h2>
+    <h6 class="h2-text h6-text">UI LESSON</h6>
     <p>Playwright module provides a method to launch a browser instance. The following is a typical example of using
         <span style="color: green">Playwright</span> to drive automation</p>
-    <a href="https://playwright.dev/python/" target="_blank">Python_main</a>
-    <a href="https://playwright.dev/python/docs/intro" target="_parent">Python_doc_intro</a>
-    <a href="https://playwright.dev/python/docs/api/class-playwright" target="_self">Python_api</a>
-    <a href="https://playwright.dev/python/community/welcome" target="_top">Python_community</a>
+    <a href="https://playwright.dev/python/" target="_blank">Python</a>
     <img src="https://playwright.dev/python/img/logos/Browsers.png" width="20%" alt="Browsers">
     <ul>
         <li>Item A</li>
@@ -73,6 +101,17 @@
         </tr>
         </tbody>
     </table>
+    <div class="nth">
+        <p>1</p>
+        <p>2</p>
+        <h6>3</h6>
+        <h5>4</h5>
+        <p>5</p>
+    </div>
+</div>
+<div class="javascript">
+    <h2 class="h2-text">UI Automation</h2>
+    <a href="https://playwright.dev/python/" target="_blank">JavaScript</a>
 </div>
 </body>
 </html>
