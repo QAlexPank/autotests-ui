@@ -1,0 +1,65 @@
+# Имя workflow в интерфейсе GitHub Actions
+name: UI tests
+
+# Когда будет запускаться данный workflow
+on:
+  push:
+    branches:
+      - main  # Запускать workflow, когда будет сделан коммит в ветку main
+  pull_request:
+    branches:
+      - main  # Запускать workflow, когда будет сделан pull request в ветку main
+
+# Шаги, которые должны быть выполнены в рамках работы с тестами
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest  # Тесты будут запускаться на последней версии Ubuntu
+
+    steps:
+      # 1 Шаг: клонирование репозитория на машину GitHub Actions
+      - name: Check out repository
+        uses: actions/checkout@v5  # Используем GitHub Action для клонирования репозитория
+
+      # 2 Шаг: установка Python на виртуальной машине
+      - name: Set up Python
+        uses: actions/setup-python@v6  # Используем GitHub Action для установки Python
+        with:
+          python-version: '3.13'  # Устанавливаем последнюю версию Python
+
+      # 3 Шаг: установка всех зависимостей проекта
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip  # Обновление pip до последней версии
+          pip install -r requirements.txt  # Установка зависимостей, указанные в requirements.txt
+          playwright install --with-deps  # Установка браузеров для Playwright 
+
+      # 4 Шаг: запуск тестов с использованием pytest и генерации отчётов Allure
+      - name: Run Playwright tests with pytest and generate Allure results
+        run: |
+          pytest -m regression --alluredir=allure-results --numprocesses 2  # Запуск тестов, отмеченные как "regression", генерация результатов для Allure
+
+      # 5 Шаг: получение истории отчётов Allure
+      - name: Get Allure history
+        uses: actions/checkout@v5  # клонирование репозитория, чтобы получить историю отчётов
+        if: always()  # Всегда выполняется, независимо от успеха или неудачи предыдущих шагов
+        continue-on-error: true  # Если здесь возникнет ошибка, workflow всё равно продолжит выполнение
+        with:
+          ref: gh-pages  #  ветка для получения отчётов
+          path: gh-pages  # путь для сохранения отчётов
+
+      # 6 Шаг: генерация и отображение отчёта Allure
+      - name: Generates Allure Report with history
+        uses: simple-elf/allure-report-action@v1.13  # готовое решение из GitHub Marketplace для генерации Allure отчёта
+        if: always()  # Этот шаг тоже всегда выполняется
+        with:
+          allure_results: allure-results  # каталог с результатами тестов
+          allure_history: allure-history  # каталог для истории отчётов Allure
+
+      # 7 Шаг: деплой отчёта Allure на GitHub Pages, чтобы его можно было просматривать в браузере
+      - name: Deploy report to Github Pages
+        if: always()  # Выполняется всегда, независимо от успеха других шагов
+        uses: peaceiris/actions-gh-pages@v4  # Использование GitHub Action для публикации отчёта на GitHub Pages
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Токен для аутентификации на GitHub
+          publish_branch: gh-pages  # отчёт будет опубликован в ветке gh-pages
+          publish_dir: allure-history  # папка, которая будет опубликована на GitHub Pages
