@@ -1,3 +1,4 @@
+# Имя workflow в интерфейсе GitHub Actions
 name: UI tests
 
 on:
