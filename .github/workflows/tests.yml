@@ -12,33 +12,36 @@ on:
 
 # Шаги, которые должны быть выполнены в рамках работы с тестами
 jobs:
-  run-tests:
+  run-tests: # запуск тестов
     runs-on: ubuntu-latest  # Тесты будут запускаться на последней версии Ubuntu
 
     steps:
-      # 1 Шаг: клонирование репозитория на машину GitHub Actions
+      # Шаг клонирования репозитория на машину GitHub Actions
       - name: Check out repository
         uses: actions/checkout@v5  # Используем GitHub Action для клонирования репозитория
 
-      # 2 Шаг: установка Python на виртуальной машине
+      # Шаг установки Python на виртуальной машине
       - name: Set up Python
         uses: actions/setup-python@v6  # Используем GitHub Action для установки Python
         with:
           python-version: '3.13'  # Устанавливаем последнюю версию Python
 
-      # 3 Шаг: установка всех зависимостей проекта
+      # Шаг установки всех зависимостей проекта
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip  # Обновление pip до последней версии
           pip install -r requirements.txt  # Установка зависимостей, указанные в requirements.txt
-          playwright install --with-deps  # Установка браузеров для Playwright 
-
-      # 4 Шаг: запуск тестов с использованием pytest и генерации отчётов Allure
+          playwright install --with-deps  # Установка браузеров для Playwright
+      # Шаг запуска тестов с использованием pytest и генерации отчётов Allure
       - name: Run Playwright tests with pytest and generate Allure results
         run: |
           pytest -m regression --alluredir=allure-results --numprocesses 2  # Запуск тестов, отмеченные как "regression", генерация результатов для Allure
+  publish-report: # формирование отчета
+    needs: run-tests # запуск только после успешного выполнения прошлого этапа
+    runs-on: ubuntu-latest  # Отчет будут запускаться на последней версии Ubuntu
 
-      # 5 Шаг: получение истории отчётов Allure
+    steps:
+      # Шаг получения истории отчётов Allure
       - name: Get Allure history
         uses: actions/checkout@v5  # клонирование репозитория, чтобы получить историю отчётов
         if: always()  # Всегда выполняется, независимо от успеха или неудачи предыдущих шагов
@@ -47,7 +50,7 @@ jobs:
           ref: gh-pages  #  ветка для получения отчётов
           path: gh-pages  # путь для сохранения отчётов
 
-      # 6 Шаг: генерация и отображение отчёта Allure
+      # Шаг генерации и отображения отчёта Allure
       - name: Generates Allure Report with history
         uses: simple-elf/allure-report-action@v1.13  # готовое решение из GitHub Marketplace для генерации Allure отчёта
         if: always()  # Этот шаг тоже всегда выполняется
@@ -55,9 +58,9 @@ jobs:
           allure_results: allure-results  # каталог с результатами тестов
           allure_history: allure-history  # каталог для истории отчётов Allure
 
-      # 7 Шаг: деплой отчёта Allure на GitHub Pages, чтобы его можно было просматривать в браузере!
+      # Шаг деплоя отчёта Allure на GitHub Pages, чтобы его можно было просматривать в браузере
       - name: Deploy report to Github Pages
-        if: always()  # Выполняется всегда, независимо от успеха других шагов
+        if: always()  # Выполняется всегда, независимо от успеха других шагов.
         uses: peaceiris/actions-gh-pages@v4  # Использование GitHub Action для публикации отчёта на GitHub Pages
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Токен для аутентификации на GitHub
