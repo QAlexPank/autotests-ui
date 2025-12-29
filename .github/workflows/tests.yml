@@ -1,12 +1,15 @@
 # Имя workflow в интерфейсе GitHub Actions
 name: UI tests
 
+# Когда будет запускаться данный workflow
 on:
   push:
     branches:
+      # Запускать workflow, когда будет сделан коммит в ветку main
       - main
   pull_request:
     branches:
+      # Запускать workflow, когда будет сделан pull request в ветку main
       - main
 
 jobs:
