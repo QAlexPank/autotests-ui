@@ -1,15 +1,11 @@
-# Имя workflow в интерфейсе GitHub Actions
 name: UI tests
 
-# Когда будет запускаться данный workflow
 on:
   push:
     branches:
-      # Запускать workflow, когда будет сделан коммит в ветку main
       - main
   pull_request:
     branches:
-      # Запускать workflow, когда будет сделан pull request в ветку main
       - main
 
 jobs:
@@ -23,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
@@ -37,7 +33,7 @@ jobs:
 
       - name: Upload Allure results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: allure-results
           path: allure-results
@@ -50,13 +46,13 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: gh-pages
           path: gh-pages
 
       - name: Download Allure results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: allure-results
           path: allure-results
